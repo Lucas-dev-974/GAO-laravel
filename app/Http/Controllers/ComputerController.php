@@ -46,7 +46,6 @@ class ComputerController extends Controller
     }
 
     public function delete(Request $request, $id){
-        // return response()->json(['test']);
         if(empty($id)) return response()->json(['message' => 'Veuillez remplir le champ demandé !'], 403);
         $computer = Computer::find($request->id);
         if(!$computer)  return response()->json(['message' => 'L\'ordinateur n\'existe pas ! '], 406);
