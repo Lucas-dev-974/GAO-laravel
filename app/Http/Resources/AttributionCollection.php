@@ -18,7 +18,7 @@ class AttributionCollection extends JsonResource
             'id'       => $this->id,
             'date'     => $this->date,
             'horraire' => $this->horraire,
-            'users'     => new UserCollection($this->client) 
+            'client'     => new UserCollection($this->client) 
         ];
     }
 }
