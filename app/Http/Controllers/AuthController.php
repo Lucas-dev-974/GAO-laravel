@@ -3,7 +3,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\User;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
@@ -14,7 +13,7 @@ class AuthController extends Controller
      * @return void
      */
     public function __construct() {
-        $this->middleware('jwt.verify', ['except' => ['login', 'register']]);
+        $this->middleware(['jwt.verify', 'cors'], ['except' => ['login', 'register']]);
     }
 
     /**
