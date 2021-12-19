@@ -18,15 +18,15 @@ class AttributionController extends Controller
     public function add(Request $request){
         $validator = Validator::make($request->all(), [
             'computerID' =>  'numeric|required',
-            'userID'     =>  'numeric|required',
+            'clientID'     =>  'numeric|required',
             'horraire'    => 'numeric|required',
             'date'        => 'string|required'
         ]);
-
+        // return response()->json(['okok']);
         if($validator->fails()) return response()->json(['message' => 'Des champs sont manquant !'], 403);
         
         $attribution =  Attribution::create([
-            'user_id'     => $validator->validated()['userID'],
+            'user_id'     => $validator->validated()['clientID'],
             'computer_id' => $validator->validated()['computerID'],
             'horraire'    => $validator->validated()['horraire'],
             'date'        => $validator->validated()['date']
