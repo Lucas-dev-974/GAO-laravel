@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\URL;
 // URL::forceSchema('https');
 
 Route::group([
-    'middleware' => 'api',
+    'middleware' => ['api', 'cors'],
     'prefix' => 'auth'
 ], function () {
     Route::post('/',         [AuthController::class, 'login'])->name('authLogin');
@@ -51,7 +51,7 @@ Route::group([
 
 Route::group([
     'midleware' => 'api',
-    'prefix'    => 'client'
+    'prefix'    => 'clients'
 ], function($router){
     Route::get('/',         [ClientController::class, 'get']);
     Route::post('/',        [ClientController::class, 'create']);
