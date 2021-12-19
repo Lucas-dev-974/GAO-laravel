@@ -33,6 +33,6 @@ class JwtMiddleware extends BaseMiddleware
                 return response()->json(['status' => 'Authorization Token not found'], 401);
             }
         }
-        return $next($request);
+        return $next($request)->header('Access-Control-Allow-Origin', '*');
     }
 }
