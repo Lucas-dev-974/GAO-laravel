@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\URL;
 |
 */
 
-// URL::forceSchema('https');
+URL::forceSchema('https');
 
 Route::group([
     'middleware' => ['api', 'cors'],
