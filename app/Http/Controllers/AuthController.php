@@ -13,7 +13,8 @@ class AuthController extends Controller
      * @return void
      */
     public function __construct() {
-        $this->middleware(['jwt.verify', 'cors'], ['except' => ['login', 'register']]);
+        $this->middleware(['jwt.verify'], ['except' => ['login', 'register']]);
+        $this->middleware('cors');
     }
 
     /**
@@ -115,7 +116,6 @@ class AuthController extends Controller
     }
 
     public function TestToken(Request $request){
-        return response()->json(['okokoko']);
         return response()->json(['success' => true]);
     }
 }
