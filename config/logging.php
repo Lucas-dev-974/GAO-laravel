@@ -50,7 +50,7 @@ return [
     'channels' => [
         'stack' => [
             'driver' => 'stack',
-            'channels' => ['single'],
+            'channels' => ['custom_error', 'custom_debug', 'custom_critical', 'custom_info', 'custom_notice', 'custom_warning', 'custom_alrt', ],
             'ignore_exceptions' => false,
         ],
 
@@ -111,7 +111,56 @@ return [
         ],
 
         'emergency' => [
-            'path' => storage_path('logs/laravel.log'),
+            'path' => storage_path('logs/emergency.log'),
+        ],
+        
+        'custom_error' => [
+            'driver' => 'single',
+            'level'  => 'error',
+            'path'   => storage_path('logs/errors.log'),
+            'bubble' => false
+        ],
+
+        'custom_debug' => [
+            'driver' => 'single',
+            'level'  => 'debug',
+            'path'   => storage_path('logs/debug.log'),
+        ],
+
+        'custom_info' => [
+            'driver' => 'single',
+            'level'  => 'info',
+            'path'   => storage_path('logs/infos.log'),
+        ],
+
+        'custom_emergency' => [
+            'driver' => 'single',
+            'level'  => 'emergency',
+            'path'   => storage_path('logs/emergencys.log'),
+        ],
+
+        'custom_alert' => [
+            'driver' => 'single',
+            'level'  => 'alert',
+            'path'   => storage_path('logs/alerts.log'),
+        ],
+
+        'custom_notice' => [
+            'driver' => 'single',
+            'level'  => 'notice',
+            'path'   => storage_path('logs/notices.log'),
+        ],
+
+        'custom_warning' => [
+            'driver' => 'single',
+            'level'  => 'warning',
+            'path'   => storage_path('logs/warning.log'),
+        ],
+
+        'custom_critical' => [
+            'driver' => 'single',
+            'level'  => 'critical',
+            'path'   => storage_path('logs/criticals.log'),
         ],
     ],
 
