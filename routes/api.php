@@ -18,14 +18,9 @@ use Illuminate\Support\Facades\URL;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE');
-header('Access-Control-Allow-Headers: Content-Type, X-Auth-Token, Origin, Authorization');
-
-URL::forceSchema('https');
 
 Route::group([
-    'middleware' => ['api', 'cors'],
+    'middleware' => ['api'],
     'prefix' => 'auth'
 ], function () {
     Route::post('/',         [AuthController::class, 'login'])->name('authLogin');
@@ -34,7 +29,7 @@ Route::group([
 });
 
 Route::group([
-    'midleware' => 'api',
+    'midleware' => [ 'api'],
     'prefix'    => 'computers'
 ], function(){
     Route::get('/{date}',        [ComputerController::class, 'get']);
