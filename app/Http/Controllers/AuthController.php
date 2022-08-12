@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -19,23 +20,33 @@ class AuthController extends Controller
 
     /**
      * Get a JWT via given credentials.
-     *
+     * @param  Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function login(Request $request){
+
+        // Lets check type and get user params if they types is valid
     	$validator = Validator::make($request->all(), [
             'email'    => 'required|email',
             'password' => 'required|string|min:6',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
+        // Check if user params have errors  and send json error response
+        if ($validator->fails())  return response()->json($validator->errors(), 422); 
 
+        // Get user by mail / Check if user doesnt exist if it return json error response
+        $user = User::where(['email' => $validator->validated()['email']])->first();
+        if(!$user) return response()->json([ 'message' => 'Mot de passe ou email invalide !' ], 403);       
+
+        if(!$this->checkTentative($user)) return response()->json([
+            'message' => 'Désoler, vous avez essayer de vous connecté trop de fois sans succès, vos requêtes, sont désormer bloquer. \n ' .
+                         'Si vous souhaitez vous connecter un mail vous à été envoyer.'
+        ]);
+
+        // Lets check if user credentials is not valid valid
         if (! $token = auth()->attempt($validator->validated())) {
-            return response()->json([
-                'message' => 'Mot de passe ou email invalide !'
-            ], 403);
+            $this->checkTentative($user, true);
+            return response()->json([ 'message' => 'Mot de passe ou email invalide !' ], 403);
         }
         
         return $this->createNewToken($token);
@@ -43,7 +54,7 @@ class AuthController extends Controller
 
     /**
      * Register a User.
-     *
+     * @param  Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function register(Request $request) {
@@ -53,10 +64,6 @@ class AuthController extends Controller
             'email' => 'required|string|email|max:100|unique:users',
             'password' => 'required|string|confirmed|min:6',
         ]);
-
-        if($validator->fails()){
-            return response()->json($validator->errors()->toJson(), 400);
-        }
 
         $user = User::create(array_merge(
                     $validator->validated(),
@@ -72,18 +79,17 @@ class AuthController extends Controller
 
     /**
      * Log the user out (Invalidate the token).
-     *
+     * @param  Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function logout() {
         auth()->logout();
-
         return response()->json(['message' => 'User successfully signed out']);
     }
 
     /**
      * Refresh a token.
-     *
+     * @param  Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function refresh() {
@@ -117,5 +123,28 @@ class AuthController extends Controller
 
     public function TestToken(Request $request){
         return response()->json(['success' => true]);
+    }
+
+    /**
+     * Check if user connexion tentative is less then five 
+     * @param User $user
+     * @param Boolean $loginFailed
+     * @param Boolean $reset
+     */
+    private function checkTentative($user, $loginFailed = false, $reset = false){
+        if($reset === true) {
+            $user->tentative = 0;
+            $user->save();
+        }
+        if($user->tentative >=  5 && $loginFailed === false){
+            Log::info('USER with email:' . $user->email . ' try to connect while blocked');
+            return false;
+        }
+
+        if($loginFailed == true){
+            $user->tentative += 1;
+            $user->save();
+        }
+        return true;
     }
 }
